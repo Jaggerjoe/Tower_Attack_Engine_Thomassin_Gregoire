@@ -28,9 +28,32 @@ public class MapManager : MonoBehaviour
     public List<Vector3> debugLockRemoved;
 
     [ContextMenu("InitializeMap ")]
-    public void InitializeMap()
+    public void InitializeMapRandomly()
     {
         // ====== Intialization des Datas.
+        InitDatAMapRandomly();
+
+        // ====== Creation de la View
+       
+        CreateMapView();
+        
+    }
+    public void InitializeEmptyMap()
+    {
+        //===== Initialization des Datas =====
+        debugLockRemoved = new List<Vector3>();
+
+        mapData.grid = new SquareData[mapData.width * mapData.height];
+
+        mapData.edgesHori = new bool[mapData.width * (mapData.height + 1)];
+
+        mapData.edgesVert = new bool[(mapData.width + 1) * mapData.height];
+        // ====== Creation de la vue ======
+        CreateMapView();
+    }
+
+    private void InitDatAMapRandomly()
+    {
         // Squares total random
         // IntializeSquareGrid();
         // Square en fonction du pourcent des Lock
@@ -46,12 +69,14 @@ public class MapManager : MonoBehaviour
         // On appel la regle de validation des Edges VS Squares
         ProcessRuleSquareVSEdge(mapData.edgesHori, mapData.width, new Vector3(0, 0, -1));
         ProcessRuleSquareVSEdge(mapData.edgesVert, mapData.width + 1, new Vector3(-1, 0, 0));
-
-        // ====== Creation de la View
+    }
+   
+    private void CreateMapView()
+    {
         // Clean NavContainer
         DestroyAllChild(navContainer);
 
-        if(generateView)
+        if (generateView)
         {
             // Instantiation des view des squares en fonction des Datas.
             CreateSquaresView();
@@ -153,10 +178,14 @@ public class MapManager : MonoBehaviour
             switch (mapData.grid[i].state)
             {
                 case SquareState.Lock:
+#if UNITY_EDITOR
                     newSquareView = (GameObject)PrefabUtility.InstantiatePrefab(prefabWall);
+#endif
                     break;
                 case SquareState.Water:
+#if UNITY_EDITOR
                     newSquareView = (GameObject)PrefabUtility.InstantiatePrefab(prefabWater);
+#endif
                     break;
             }
 
@@ -249,7 +278,9 @@ public class MapManager : MonoBehaviour
             if (arrayEdges[i])
             {
                 // Creation d'une instance de prefab de vue en fonction du state.
+#if UNITY_EDITOR
                 GameObject newSquareView = (GameObject)PrefabUtility.InstantiatePrefab(prefabEdge);
+#endif
                 newSquareView.transform.SetParent(navContainer.transform);
                 Vector3 newEdgePos = GetPositionFromIndex(i, width);
                 newEdgePos += adderPosition;
@@ -265,7 +296,9 @@ public class MapManager : MonoBehaviour
     {
         // Création de la vue en fonction des Datas
         // GameObject surface = Instantiate(prefabSurface);
+#if UNITY_EDITOR
         GameObject surface = (GameObject)PrefabUtility.InstantiatePrefab(prefabSurface);
+#endif
         surface.transform.SetParent(navContainer.transform);
 
         // Calcul de la position de la surface.
