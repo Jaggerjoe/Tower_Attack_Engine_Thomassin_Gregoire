@@ -23,11 +23,11 @@ public class MapManager : MonoBehaviour
     // Variables de debug.
     [Header("Debug Var")]
     [Range(0.0f,0.5f)]
-    public float downScale = 0.2f;
+    public float downScale = 0.1f;
     public bool showDebugGrid = true;
     public List<Vector3> debugLockRemoved;
 
-    [ContextMenu("InitializeMap Random")]
+    [ContextMenu("InitializeMap ")]
     public void InitializeMap()
     {
         // ====== Intialization des Datas.
