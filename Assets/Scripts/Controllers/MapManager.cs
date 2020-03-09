@@ -71,7 +71,7 @@ public class MapManager : MonoBehaviour
         ProcessRuleSquareVSEdge(mapData.edgesVert, mapData.width + 1, new Vector3(-1, 0, 0));
     }
    
-    private void CreateMapView()
+    public void CreateMapView()
     {
         // Clean NavContainer
         DestroyAllChild(navContainer);
@@ -90,7 +90,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private void DestroyAllChild(GameObject parent)
+    public void DestroyAllChild(GameObject parent)
     {
         if (parent != null)
         {
@@ -169,7 +169,7 @@ public class MapManager : MonoBehaviour
     }
 
     // Permet de créer la vue des squares en fonction de leur state.
-    private void CreateSquaresView()
+    public void CreateSquaresView()
     {
         for (int i = 0; i < mapData.grid.Length; i++)
         {
@@ -201,7 +201,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private int GetIndexSquareFromPos(Vector3 pos)
+    public int GetIndexSquareFromPos(Vector3 pos)
     {
         // Test si la position sort des limites
         if (pos.x >= 0 && pos.z >= 0 && pos.x < mapData.width && pos.z < mapData.height)
@@ -211,10 +211,29 @@ public class MapManager : MonoBehaviour
         // Pas de square à la position demandée => on retourne -1
         return -1;
     }
+
+    public int GetIndexEdgesVertiFromPos(Vector3 pos)
+    {
+        if (pos.x >= 0 && pos.z >= 0 && pos.x < mapData.width + 1 && pos.z < mapData.height)
+        {
+            return ((int)pos.z * (mapData.width + 1)) + (int)pos.x;
+        }
+        // Pas de square à la position demandée => on retourne -1
+        return-1;
+    }
+    public int GetIndexEdgesHoriFromPos(Vector3 pos)
+    {
+        if (pos.x >= 0 && pos.z >= 0 && pos.x < mapData.width && pos.z < mapData.height + 1)
+        {
+            return ((int)pos.z * mapData.width) + (int)pos.x;
+        }
+        // Pas de square à la position demandée => on retourne -1
+        return -1;
+    }
     #endregion SQUARES
 
     #region EDGES
-    private void InitializeEdgeGrid(ref bool[] arrayEdges, int numberElement, int percentRandom)
+    public void InitializeEdgeGrid(ref bool[] arrayEdges, int numberElement, int percentRandom)
     {
         arrayEdges = new bool[numberElement];
 
@@ -229,7 +248,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private void ProcessRuleSquareVSEdge(bool[] arrayEdges, int width, Vector3 adderTestLock)
+    public void ProcessRuleSquareVSEdge(bool[] arrayEdges, int width, Vector3 adderTestLock)
     {
         for (int i = 0; i < arrayEdges.Length; i++)
         {
@@ -426,7 +445,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private Color GetColorFromState(SquareState state)
+    public Color GetColorFromState(SquareState state)
     {
         switch (state)
         {
