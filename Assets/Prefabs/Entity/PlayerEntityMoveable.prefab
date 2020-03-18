@@ -150,7 +150,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 2
+  m_Radius: 5
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
@@ -204,11 +204,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alignment: 2
-  life: 1
+  m_CurrentLife: 1
+  startLife: 1
   popAmount: 1
   attackContainer: {fileID: 2672909135643723876}
+  detectionContainer: {fileID: 0}
   damageAttack: 1
   rangeDetect: 2
+  rangeToDoAttack: 5
   timeWaitNextAttack: 1
   moveSpeed: 1
   globalTarget: {fileID: 0}

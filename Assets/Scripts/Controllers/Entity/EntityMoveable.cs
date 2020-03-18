@@ -8,11 +8,13 @@ public class EntityMoveable : Entity
 {
     [Range(1, 50)]
     public float moveSpeed = 1;
+  
 
     [Header("Target")]
     // Variable target
     public GameObject globalTarget;
     
+
     [Header("Stop Time")]
     // Variable de temps d'arret
     public float timeWaitBeforeMove = 1;
@@ -20,7 +22,12 @@ public class EntityMoveable : Entity
     
     private NavMeshAgent m_NavMeshAgent;
 
-   
+    public override void RangeToDoAttack(Entity target)
+    {
+        base.RangeToDoAttack(target);
+        m_NavMeshAgent.SetDestination(target.transform.position);
+        Debug.Log("coucou");
+    }
     public override void InitEntity()
     {
         base.InitEntity();
@@ -60,6 +67,7 @@ public class EntityMoveable : Entity
             {
                 m_NavMeshAgent.isStopped = false;
                 SetDestination();
+                
             }
         }
     }

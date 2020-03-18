@@ -14,9 +14,12 @@ public class Entity : MonoBehaviour
 
     [Header("AttackProps")]
     public GameObject attackContainer;
+    public GameObject detectionContainer;
     public int damageAttack = 1;
     
+    
     public int rangeDetect = 1;
+    public int rangeToDoAttack = 5;
 
     [Header("Time Next Attack")]
     [Range(0, 10)]
@@ -46,12 +49,12 @@ public class Entity : MonoBehaviour
         Debug.Log("je suis pas activé");
 
     }
-
+  
     //Set de l'entité lorsqu'elle est activé
     //elle est reset a ses valeurs de depart
     public virtual void RestartEntity()
     {
-        CapsuleCollider colliderAttack;
+        CapsuleCollider colliderAttack;     
         colliderAttack = attackContainer.GetComponent<CapsuleCollider>();
         colliderAttack.radius = rangeDetect;
 
@@ -114,12 +117,20 @@ public class Entity : MonoBehaviour
             Entity entity = target.GetComponent<Entity>();
             if (entity && entity.alignment != alignment)
             {
-                //Debug.Log("Can Hit This");
-                DoAttack(entity);
+                RangeToDoAttack(entity);
             }
         }
     }
+    public virtual void RangeToDoAttack(Entity target)
+    {
 
+        if(rangeDetect<= rangeToDoAttack)
+        {
+            DoAttack(target);
+        }
+    }
+
+    
     protected virtual bool DoAttack(Entity targetEntity)
     {
         // On verifie si l'entity est valide

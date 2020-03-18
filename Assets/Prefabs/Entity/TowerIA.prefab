@@ -106,7 +106,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6749672088759616213}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.56, y: 0, z: 1.07}
+  m_LocalPosition: {x: 13.42, y: 0, z: 10.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6749672089233891671}
@@ -132,7 +132,7 @@ MonoBehaviour:
   popAmount: 1
   attackContainer: {fileID: 6749672089233891664}
   damageAttack: 1
-  rangeDetect: 1
+  rangeDetect: 20
   timeWaitNextAttack: 1
 --- !u!54 &6749672088759616042
 Rigidbody:
@@ -249,7 +249,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 2
+  m_Radius: 3
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
