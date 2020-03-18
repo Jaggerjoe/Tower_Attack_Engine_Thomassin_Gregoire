@@ -131,8 +131,10 @@ MonoBehaviour:
   startLife: 1
   popAmount: 1
   attackContainer: {fileID: 6749672089233891664}
+  detectionContainer: {fileID: 0}
   damageAttack: 1
-  rangeDetect: 20
+  rangeDetect: 1
+  rangeToDoAttack: 5
   timeWaitNextAttack: 1
 --- !u!54 &6749672088759616042
 Rigidbody:

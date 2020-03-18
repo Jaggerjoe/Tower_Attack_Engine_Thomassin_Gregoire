@@ -25,8 +25,16 @@ public class EntityMoveable : Entity
     public override void RangeToDoAttack(Entity target)
     {
         base.RangeToDoAttack(target);
-        m_NavMeshAgent.SetDestination(target.transform.position);
-        Debug.Log("coucou");
+        if(target)
+        {
+            m_NavMeshAgent.SetDestination(target.transform.position);
+            Debug.Log("coucou");
+        }
+        if(!target)
+        {
+            SetDestination();
+        }
+        
     }
     public override void InitEntity()
     {

@@ -210,7 +210,7 @@ MonoBehaviour:
   attackContainer: {fileID: 2672909135643723876}
   detectionContainer: {fileID: 0}
   damageAttack: 1
-  rangeDetect: 2
+  rangeDetect: 1
   rangeToDoAttack: 5
   timeWaitNextAttack: 1
   moveSpeed: 1

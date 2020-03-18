@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour
     [Header("AttackProps")]
     public GameObject attackContainer;
     public GameObject detectionContainer;
+
     public int damageAttack = 1;
     
     
@@ -42,11 +43,11 @@ public class Entity : MonoBehaviour
     }
     public void OnEnable()
     {
-        Debug.Log("je suis activé");
+        
     }
     public void OnDisable()
     {
-        Debug.Log("je suis pas activé");
+        
 
     }
   
@@ -56,7 +57,7 @@ public class Entity : MonoBehaviour
     {
         CapsuleCollider colliderAttack;     
         colliderAttack = attackContainer.GetComponent<CapsuleCollider>();
-        colliderAttack.radius = rangeDetect;
+        colliderAttack.radius = rangeToDoAttack;
 
         m_CurrentLife = startLife;
      }
@@ -123,11 +124,13 @@ public class Entity : MonoBehaviour
     }
     public virtual void RangeToDoAttack(Entity target)
     {
+        float dist = Vector3.Distance(target.transform.position, transform.position);
 
-        if(rangeDetect<= rangeToDoAttack)
+        if (dist <= rangeDetect)
         {
             DoAttack(target);
         }
+      
     }
 
     

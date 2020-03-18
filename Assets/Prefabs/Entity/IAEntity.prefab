@@ -150,8 +150,10 @@ MonoBehaviour:
   startLife: 1
   popAmount: 1
   attackContainer: {fileID: 549381587927828974}
+  detectionContainer: {fileID: 0}
   damageAttack: 1
   rangeDetect: 1
+  rangeToDoAttack: 5
   timeWaitNextAttack: 1
   moveSpeed: 1
   globalTarget: {fileID: 0}
