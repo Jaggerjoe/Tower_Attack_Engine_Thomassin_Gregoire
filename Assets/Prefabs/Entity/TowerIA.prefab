@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e62f1a896f3036f4b9d1cdf6efe44b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alignment: 2
+  alignment: 1
   m_CurrentLife: 1
   startLife: 1
   popAmount: 1
