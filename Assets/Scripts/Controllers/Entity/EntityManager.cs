@@ -13,7 +13,9 @@ public class EntityManager : MonoBehaviour
     
     public GameObject globalTarget;
     public GameObject globalTarget1;
-  
+    public float timer = 0;
+    private float m_CurrentTimer = 3;
+   
 
     private Camera m_CurrentCamera;
 
@@ -29,20 +31,49 @@ public class EntityManager : MonoBehaviour
     private void Update()
     {
         InstantiateEnemy();
-       
+        SpawnEnemy();
     }
     private void InstantaiteTower()
     {
+        //On récupère la tour setter dans le poolManger
         GameObject towerinstanted = PoolManager.Instance.GetElement(prefabTowerEnemyInstantiate);
         GameObject towerPlayerInstantiated = PoolManager.Instance.GetElement(prefabTowerPlayerInstantiate);
-
+        //On set son endroit de spawn 
         towerinstanted.transform.position = globalTarget.transform.position;
         towerPlayerInstantiated.transform.position = globalTarget1.transform.position;
-       
+       //On active la tour.
         towerinstanted.SetActive(true);
         towerPlayerInstantiated.SetActive(true);
 
 
+    }
+    public void SpawnEnemy()
+    {
+        //On fais ecoulé selon le time.deltaTime(je sais pas trop comment il fonctionne)
+        timer = timer + Time.deltaTime;
+        //Si le timer est supérieur ou égale au timer courant alors on execute le if.
+        if (timer >= m_CurrentTimer)
+        {
+            // On recupère un élement depuis le poolmanager
+            GameObject iaSpawn = PoolManager.Instance.GetElement(prefabEnemy);
+            //On Fais spawn l'IA a l'endroit de la tour
+            iaSpawn.transform.position = prefabTowerEnemyInstantiate.transform.position;
+            //On active l'IA qui est desactivé dans le poolManager.
+            iaSpawn.SetActive(true);
+            Entity entity = iaSpawn.GetComponent<Entity>();
+            if (entity)
+            {
+                entity.InitEntity();
+                if (entity is EntityMoveable moveable)
+                {
+                    moveable.SetGlobalTarget(prefabTowerPlayerInstantiate);
+                }
+                entity.RestartEntity();
+            }
+            timer = 0;
+            Debug.Log("Coucou");
+
+        }
     }
     private void InstantiateEnemy()
     {

@@ -136,6 +136,8 @@ MonoBehaviour:
   rangeDetect: 1
   rangeToDoAttack: 5
   timeWaitNextAttack: 1
+  Timer: 0
+  IAEntity: {fileID: 549381587482201855, guid: ccd6ffec9b71a0045bf1af8e927b98a9, type: 3}
 --- !u!54 &6749672088759616042
 Rigidbody:
   m_ObjectHideFlags: 0

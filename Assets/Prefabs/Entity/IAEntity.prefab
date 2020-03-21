@@ -150,13 +150,14 @@ MonoBehaviour:
   startLife: 1
   popAmount: 1
   attackContainer: {fileID: 549381587927828974}
-  detectionContainer: {fileID: 0}
   damageAttack: 1
   rangeDetect: 1
   rangeToDoAttack: 5
   timeWaitNextAttack: 1
   moveSpeed: 1
-  globalTarget: {fileID: 0}
+  target: {fileID: 549381587482201855}
+  prefabBulletPlayer: {fileID: 5206658348387069782, guid: 7318ba65e3ba1a94c9f7538a518384d2,
+    type: 3}
   timeWaitBeforeMove: 1
 --- !u!1 &549381587581709119
 GameObject:

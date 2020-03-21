@@ -12,7 +12,9 @@ public class EntityMoveable : Entity
 
     [Header("Target")]
     // Variable target
-    public GameObject globalTarget;
+    private GameObject m_GlobalTarget;
+    public GameObject target;
+    public GameObject prefabBulletPlayer;
     
 
     [Header("Stop Time")]
@@ -21,6 +23,7 @@ public class EntityMoveable : Entity
     private float m_CurrentTimeBeforeNextMove = 0;
     
     private NavMeshAgent m_NavMeshAgent;
+
 
     public override void RangeToDoAttack(Entity target)
     {
@@ -50,15 +53,15 @@ public class EntityMoveable : Entity
     }
     public void SetGlobalTarget(GameObject target)
     {
-        globalTarget = target;
+        m_GlobalTarget = target;
         SetDestination();
     }
 
     private void SetDestination()
     {
-        if (globalTarget)
+        if (m_GlobalTarget)
         {
-            m_NavMeshAgent.SetDestination(globalTarget.transform.position);
+            m_NavMeshAgent.SetDestination(m_GlobalTarget.transform.position);
         }
     }
 
@@ -85,9 +88,16 @@ public class EntityMoveable : Entity
         if(base.DoAttack(targetEntity))
         {
             m_NavMeshAgent.isStopped = true;
+            //On instancie la bullet          
+            GameObject bullet = PoolManager.Instance.GetElement(prefabBulletPlayer);
+            bullet.transform.position = target.transform.position;
+            bullet.GetComponent<Rigidbody>();
+            bullet.GetComponent<ProjectilEntityPlayer>().GetComponent<Rigidbody>();       
+            bullet.SetActive(true);         
             m_CurrentTimeBeforeNextMove = 0;
             return true;
         }
         return false;
     }
+
 }

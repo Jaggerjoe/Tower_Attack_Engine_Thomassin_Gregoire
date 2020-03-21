@@ -14,11 +14,8 @@ public class Entity : MonoBehaviour
 
     [Header("AttackProps")]
     public GameObject attackContainer;
-    public GameObject detectionContainer;
 
-    public int damageAttack = 1;
-    
-    
+    public int damageAttack = 1;       
     public int rangeDetect = 1;
     public int rangeToDoAttack = 5;
 
@@ -29,10 +26,13 @@ public class Entity : MonoBehaviour
     private bool m_CanAttack = true;
 
     public static Vector3 myPoint = Vector3.zero;
+    // temps entre chaque spawn de monstre 
+
 
     public  void Awake()
     {
         InitEntity();
+          
     }
    
 
@@ -61,7 +61,8 @@ public class Entity : MonoBehaviour
 
         m_CurrentLife = startLife;
      }
-
+    
+   
     public virtual void Update()
     {        
         if(!m_CanAttack)
@@ -75,7 +76,10 @@ public class Entity : MonoBehaviour
                 m_CanAttack = true;
             }
         }
+       
     }
+
+    
 
     // Life
     private void SetLife(int amountLife)
@@ -138,7 +142,7 @@ public class Entity : MonoBehaviour
     {
         // On verifie si l'entity est valide
         if(targetEntity.IsValidEntity())
-        {
+        {           
             // On applique les degats
             targetEntity.DamageEntity(damageAttack);
 

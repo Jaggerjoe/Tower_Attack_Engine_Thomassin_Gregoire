@@ -127,12 +127,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alignment: 2
-  life: 1
+  m_CurrentLife: 1
+  startLife: 1
   popAmount: 1
   attackContainer: {fileID: 6749672089233891664}
+  detectionContainer: {fileID: 0}
   damageAttack: 1
   rangeDetect: 1
+  rangeToDoAttack: 1
   timeWaitNextAttack: 1
+  Timer: 0
+  IAEntity: {fileID: 2672909135726546339, guid: 7b2d1c1c3a61abc4b966883b44c5eca7,
+    type: 3}
 --- !u!54 &6749672088759616042
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -176,8 +182,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyPrefab: {fileID: 6749672088759616213}
-  keys:
-  - {fileID: 6749672088759616213}
 --- !u!1 &6749672088869042097
 GameObject:
   m_ObjectHideFlags: 0
