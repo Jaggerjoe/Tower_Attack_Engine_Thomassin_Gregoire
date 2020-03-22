@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour
     [Header("AttackProps")]
     public GameObject attackContainer;
 
+
     public int damageAttack = 1;       
     public int rangeDetect = 1;
     public int rangeToDoAttack = 5;
@@ -24,7 +25,7 @@ public class Entity : MonoBehaviour
     public float timeWaitNextAttack = 1;
     private float m_CurrentTimeBeforeNextAttack = 0;
     private bool m_CanAttack = true;
-
+    public GameObject prefabBulletPlayer;
     public static Vector3 myPoint = Vector3.zero;
     // temps entre chaque spawn de monstre 
 
@@ -146,7 +147,12 @@ public class Entity : MonoBehaviour
             // On applique les degats
             targetEntity.DamageEntity(damageAttack);
 
-            // On set les variables pour l'attente de l'attaque
+            //On instancie la bullet          
+            GameObject bullet = PoolManager.Instance.GetElement(prefabBulletPlayer);          
+            bullet.GetComponent<Rigidbody>();
+           
+            bullet.transform.position = transform.position;
+            bullet.SetActive(true);
             m_CanAttack = false;
             m_CurrentTimeBeforeNextAttack = 0;
 

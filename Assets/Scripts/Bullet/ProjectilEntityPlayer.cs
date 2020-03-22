@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ProjectilEntityPlayer : MonoBehaviour
 {
+    public GameObject target;
     Rigidbody rb;
     // Start is called before the first frame update
     void Start()
@@ -14,6 +15,9 @@ public class ProjectilEntityPlayer : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        rb.AddForce(Vector3.forward * 1);
+
+        rb.AddForce(target.transform.position * 5); 
+         
     }
+    
 }

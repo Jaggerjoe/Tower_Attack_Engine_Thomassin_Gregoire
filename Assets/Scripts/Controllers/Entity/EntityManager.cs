@@ -54,22 +54,26 @@ public class EntityManager : MonoBehaviour
         //Si le timer est supérieur ou égale au timer courant alors on execute le if.
         if (timer >= m_CurrentTimer)
         {
-            // On recupère un élement depuis le poolmanager
-            GameObject iaSpawn = PoolManager.Instance.GetElement(prefabEnemy);
-            //On Fais spawn l'IA a l'endroit de la tour
-            iaSpawn.transform.position = prefabTowerEnemyInstantiate.transform.position;
-            //On active l'IA qui est desactivé dans le poolManager.
-            iaSpawn.SetActive(true);
-            Entity entity = iaSpawn.GetComponent<Entity>();
-            if (entity)
+            if (prefabTowerEnemyInstantiate != null)
             {
-                entity.InitEntity();
-                if (entity is EntityMoveable moveable)
+                // On recupère un élement depuis le poolmanager
+                GameObject iaSpawn = PoolManager.Instance.GetElement(prefabEnemy);
+                //On Fais spawn l'IA a l'endroit de la tour
+                iaSpawn.transform.position = prefabTowerEnemyInstantiate.transform.position;
+                //On active l'IA qui est desactivé dans le poolManager.
+                iaSpawn.SetActive(true);
+                Entity entity = iaSpawn.GetComponent<Entity>();
+                if (entity)
                 {
-                    moveable.SetGlobalTarget(prefabTowerPlayerInstantiate);
+                    entity.InitEntity();
+                    if (entity is EntityMoveable moveable)
+                    {
+                        moveable.SetGlobalTarget(prefabTowerPlayerInstantiate);
+                    }
+                    entity.RestartEntity();
                 }
-                entity.RestartEntity();
             }
+           
             timer = 0;
             Debug.Log("Coucou");
 

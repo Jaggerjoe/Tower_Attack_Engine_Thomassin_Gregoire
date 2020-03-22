@@ -131,13 +131,11 @@ MonoBehaviour:
   startLife: 1
   popAmount: 1
   attackContainer: {fileID: 6749672089233891664}
-  detectionContainer: {fileID: 0}
   damageAttack: 1
   rangeDetect: 1
   rangeToDoAttack: 1
   timeWaitNextAttack: 1
-  Timer: 0
-  IAEntity: {fileID: 2672909135726546339, guid: 7b2d1c1c3a61abc4b966883b44c5eca7,
+  prefabBulletPlayer: {fileID: 5206658348387069782, guid: 7318ba65e3ba1a94c9f7538a518384d2,
     type: 3}
 --- !u!54 &6749672088759616042
 Rigidbody:
