@@ -4,113 +4,109 @@
 [RequireComponent(typeof(CapsuleCollider))]
 public class Entity : MonoBehaviour
 {
-    [Header("Props")]
-    public Alignment alignment;
+    [Header("Global Props")]
+    public EntityData entityData;
+
     [SerializeField]
     private int m_CurrentLife = 1;
 
-    public int startLife = 1;
-    public int popAmount = 1;
-
-    [Header("AttackProps")]
+    [Header("Attack Props")]
     public GameObject attackContainer;
-
-
-    public int damageAttack = 1;       
-    public int rangeDetect = 1;
-    public int rangeToDoAttack = 5;
-
-    [Header("Time Next Attack")]
-    [Range(0, 10)]
-    public float timeWaitNextAttack = 1;
+    
     private float m_CurrentTimeBeforeNextAttack = 0;
     private bool m_CanAttack = true;
-    public GameObject prefabBulletPlayer;
-    public static Vector3 myPoint = Vector3.zero;
-    // temps entre chaque spawn de monstre 
 
+    private float m_CurrentTimeBeforeNextCreate = 0;
 
-    public  void Awake()
+    public void Awake()
     {
         InitEntity();
-          
-    }
-   
 
+        /*if(isProjectileAttack && prefabProjectile != null)
+        {
+            Debug.LogError("Error No Prefab Projectile");
+        }*/
+    }
+
+    // Initialisation - Construction de l'entité
     public virtual void InitEntity()
     {
-        
-        
+        RestartEntity();
     }
-    public void OnEnable()
-    {
-        
-    }
-    public void OnDisable()
-    {
-        
 
-    }
-  
-    //Set de l'entité lorsqu'elle est activé
-    //elle est reset a ses valeurs de depart
+    // Set de l'entité lorsqu'elle est activée
+    // Elle est reset à ses valeurs de depart
     public virtual void RestartEntity()
     {
-        CapsuleCollider colliderAttack;     
-        colliderAttack = attackContainer.GetComponent<CapsuleCollider>();
-        colliderAttack.radius = rangeToDoAttack;
-
-        m_CurrentLife = startLife;
-     }
-    
-   
-    public virtual void Update()
-    {        
-        if(!m_CanAttack)
+        if(entityData.isAttackEntity && attackContainer)
         {
-            if(m_CurrentTimeBeforeNextAttack < timeWaitNextAttack)
-            {
-                m_CurrentTimeBeforeNextAttack += Time.deltaTime;
-            }
-            else
-            {
-                m_CanAttack = true;
-            }
+            CapsuleCollider colliderAttack;
+            colliderAttack = attackContainer.GetComponent<CapsuleCollider>();
+            colliderAttack.radius = entityData.rangeDetect;
         }
-       
+        
+        m_CurrentLife = entityData.startLife;
     }
 
-    
+    public virtual void Update()
+    {
+        UpdateAttack();
 
+        UpdateCreator();
+    }
+
+    #region LIFE
     // Life
     private void SetLife(int amountLife)
     {
         m_CurrentLife = amountLife;
     }
 
-    private void DamageEntity(int damage)
+    public void DamageEntity(int damage)
     {
         m_CurrentLife -= damage;
         if(m_CurrentLife <= 0)
         {
             // Entity Die
-            //GameObject.Destroy(gameObject);
-            PoolManager.Instance.PoolElement(gameObject);
+            EntityManager.Instance.PoolElement(gameObject);
         }
     }
 
-    private bool IsValidEntity()
+    public bool IsValidEntity()
     {
         return gameObject.activeSelf && m_CurrentLife > 0;
     }
+    #endregion LIFE
 
+    #region ATTACK
     // Attack
+    private void UpdateAttack()
+    {
+        if (entityData.isAttackEntity)
+        {
+            if (!m_CanAttack)
+            {
+                if (m_CurrentTimeBeforeNextAttack < entityData.timeWaitNextAttack)
+                {
+                    m_CurrentTimeBeforeNextAttack += Time.deltaTime;
+                }
+                else
+                {
+                    m_CanAttack = true;
+                }
+            }
+        }
+    }
+
     private void OnTriggerStay(Collider other)
     {
-        if (m_CanAttack)
+        if (entityData.isAttackEntity)
         {
-            //Debug.Log($"Ontrigger {name}: ", other.gameObject);
-            DetectTarget(other.gameObject);
+            if (m_CanAttack)
+            {
+                //Debug.Log($"Ontrigger {name}: ", other.gameObject);
+                DetectTarget(other.gameObject);
+            }
         }
     }
 
@@ -121,38 +117,35 @@ public class Entity : MonoBehaviour
         {
             // Recuperation de l'entity pour tester l'alignement
             Entity entity = target.GetComponent<Entity>();
-            if (entity && entity.alignment != alignment)
+            if (entity && entity.entityData.alignment == entityData.typeTarget)
             {
-                RangeToDoAttack(entity);
+                //Debug.Log("Can Hit This");
+                DoAttack(entity);
             }
         }
     }
-    public virtual void RangeToDoAttack(Entity target)
-    {
-        float dist = Vector3.Distance(target.transform.position, transform.position);
 
-        if (dist <= rangeDetect)
-        {
-            DoAttack(target);
-        }
-      
-    }
-
-    
     protected virtual bool DoAttack(Entity targetEntity)
     {
         // On verifie si l'entity est valide
         if(targetEntity.IsValidEntity())
-        {           
-            // On applique les degats
-            targetEntity.DamageEntity(damageAttack);
+        {
+            if (entityData.isProjectileAttack)
+            {
+                GameObject projectile = PoolManager.Instance.GetElement(entityData.prefabProjectile);
+                Projectile projectileCompo = projectile.GetComponent<Projectile>();
+                projectile.transform.position = attackContainer.transform.position;
+                projectileCompo.InitTarget(targetEntity);
+                projectileCompo.damage = entityData.damageAttack;
+                projectile.SetActive(true);
+            }
+            else
+            {
+                // On applique les degats
+                targetEntity.DamageEntity(entityData.damageAttack);
+            }
 
-            //On instancie la bullet          
-            GameObject bullet = PoolManager.Instance.GetElement(prefabBulletPlayer);          
-            bullet.GetComponent<Rigidbody>();
-           
-            bullet.transform.position = transform.position;
-            bullet.SetActive(true);
+            // On set les variables pour l'attente de l'attaque
             m_CanAttack = false;
             m_CurrentTimeBeforeNextAttack = 0;
 
@@ -161,4 +154,39 @@ public class Entity : MonoBehaviour
         }
         return false;
     }
+    #endregion ATTACK
+
+    #region CREATOR
+    // Creator 
+    private void UpdateCreator()
+    {
+        if(entityData.isCreatorEntity)
+        {
+            if (m_CurrentTimeBeforeNextCreate < entityData.timeWaitNextCreate)
+            {
+                m_CurrentTimeBeforeNextCreate += Time.deltaTime;
+            }
+            else
+            {
+                CreateNewEntity();
+            }
+        }
+    }
+
+    private void CreateNewEntity()
+    {
+        if (entityData.toCreate != null)
+        {
+            for (int i = 0; i < entityData.nbrToCreate; i++)
+            {
+                EntityManager.Instance.PopElementFromPrefab(entityData.toCreate, transform.position);
+            }
+            m_CurrentTimeBeforeNextCreate = 0;
+        }
+        else
+        {
+            Debug.LogError("NO PREFAB SETTED !", gameObject);
+        }
+    }
+    #endregion CREATOR
 }

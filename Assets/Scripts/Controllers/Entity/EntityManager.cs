@@ -1,135 +1,180 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityManager : MonoBehaviour
+public class EntityManager : SingletonMono<EntityManager>
 {
-    public GameObject prefabToInstantiate;
+    // Ref vers la global target des entités Player
+    public GameObject towerIA;
+    public GameObject outpostIA;
+    public GameObject outpost2IA;
+    
+    // Ref vers la global target des entités IA
+    public GameObject towerPlayer;
+    public GameObject outspotPlayer;
+    public GameObject outspotPlayer2;
 
-    public GameObject prefabTowerEnemyInstantiate;
-    public GameObject prefabTowerPlayerInstantiate;
-    
-    public GameObject prefabEnemy;
-    
-    public GameObject globalTarget;
-    public GameObject globalTarget1;
-    public float timer = 0;
-    private float m_CurrentTimer = 3;
+    public Action<Alignment> OnTowerDestroy;
+
+    public void PopElementFromData(EntityData entityData, Vector3 position)
+    {
+        GameObject newInstantiate = PoolManager.Instance.GetElement(entityData);
+        
+        if (newInstantiate != null)
+        {
+            SetPopElement(newInstantiate, position);
+        }
+        else
+        {
+            Debug.LogError("NO POOLED DATA PREFAB : " + entityData.name);
+        }
+    }
+
+    public void PopElementFromPrefab(GameObject prefabToPop, Vector3 position)
+    {
+        GameObject newInstantiate = PoolManager.Instance.GetElement(prefabToPop);
+        if (newInstantiate != null)
+        {
+            SetPopElement(newInstantiate, position);
+        }
+        else
+        {
+            Debug.LogError("NO POOLED PREFAB : " + prefabToPop.name);
+        }
+    }
+    public void PoolElement(GameObject toPool)
+    {
+        if (towerPlayer == toPool)
+        {
+            OnTowerDestroy?.Invoke(Alignment.Player);
+        }
+        else if (towerIA == toPool)
+        {
+            OnTowerDestroy?.Invoke(Alignment.IA);
+        }
+
+        PoolManager.Instance.PoolElement(toPool);
+    }
+
+    // Fonction centrale.
+    // Toute instantiation d'entité doit passer par cette fonction.
+    // Elle centralise l'initialisation de l'entité.
+    private void SetPopElement(GameObject newInstantiate, Vector3 position)
+    {
+        newInstantiate.transform.position = position;
+        newInstantiate.SetActive(true);
+        Entity entity = newInstantiate.GetComponent<Entity>();
+        if (entity is EntityMoveable moveable)
+        {
+            if (moveable.entityData.alignment == Alignment.IA)
+            {
+                if ((outspotPlayer != null) && (outspotPlayer2 != null))
+                {
+                    if (Vector3.Distance(moveable.transform.position, outspotPlayer.transform.position) <= Vector3.Distance(moveable.transform.position, outspotPlayer2.transform.position))
+                    {
+                        moveable.SetGlobalTarget(outspotPlayer);
+                    }
+                }
+                if ((outspotPlayer2 != null) && (outspotPlayer != null))
+                {
+                    if (Vector3.Distance(moveable.transform.position, outspotPlayer2.transform.position) <= Vector3.Distance(moveable.transform.position, outspotPlayer.transform.position))
+                    {
+                        moveable.SetGlobalTarget(outspotPlayer2);
+                    }
+                }
+                if((outspotPlayer != null) && (towerPlayer != null))
+                {
+                    if (Vector3.Distance(moveable.transform.position, outspotPlayer.transform.position) <= Vector3.Distance(moveable.transform.position, towerPlayer.transform.position))
+                    {
+                        moveable.SetGlobalTarget(outspotPlayer);
+                    }
+                    else
+                    {
+                        moveable.SetGlobalTarget(towerPlayer);
+                    }
+                }
+                if ((outspotPlayer2 != null) && (towerPlayer != null))
+                {
+                    if (Vector3.Distance(moveable.transform.position, outspotPlayer2.transform.position) <= Vector3.Distance(moveable.transform.position, towerPlayer.transform.position))
+                    {
+                        moveable.SetGlobalTarget(outspotPlayer2);
+                    }
+                    else
+                    {
+                        moveable.SetGlobalTarget(towerPlayer);
+                    }
+                }               
+                if ((outspotPlayer == null) && (outspotPlayer2 == null))
+                {
+                    moveable.SetGlobalTarget(towerPlayer);
+                }
+                if(outspotPlayer == null)
+                {
+                    entity.RestartEntity();
+                }
+                if(outspotPlayer2 == null)
+                {
+                    entity.RestartEntity();
+                }
+                entity.RestartEntity();
+            }
+            if (moveable.entityData.alignment == Alignment.Player)
+            {
+                if((outpostIA != null) && (outpost2IA != null))
+                {
+                    if (Vector3.Distance(moveable.transform.position, outpostIA.transform.position) <= Vector3.Distance(moveable.transform.position, outpost2IA.transform.position))
+                    {
+                        moveable.SetGlobalTarget(outpostIA);                        
+                    }   
+                    else
+                    {
+                        moveable.SetGlobalTarget(outpost2IA);
+                    }
+                }                
+                if(outpost2IA == null)
+                {
+                    entity.RestartEntity();
+                }
+                if(outpostIA == null)
+                {
+                    entity.RestartEntity();
+                }
+                if ((outpostIA != null) && (towerIA != null) && (outpost2IA == null))
+                {
+                    if (Vector3.Distance(moveable.transform.position, outpostIA.transform.position) <= Vector3.Distance(moveable.transform.position, towerIA.transform.position))
+                    {
+                        moveable.SetGlobalTarget(outpostIA);
+                    }
+                    else
+                    {
+                        moveable.SetGlobalTarget(towerIA);
+                    }
+                    entity.RestartEntity();
+                }
+                if ((outpost2IA != null) && (towerIA != null) && (outpostIA == null))
+                {
+                    if (Vector3.Distance(moveable.transform.position, outpost2IA.transform.position) <= Vector3.Distance(moveable.transform.position, towerIA.transform.position))
+                    {
+                        moveable.SetGlobalTarget(outpost2IA);
+                    }
+                    else
+                    {
+                        moveable.SetGlobalTarget(towerIA);
+                    }
+                    entity.RestartEntity();
+                }
+                
+                if ((outpostIA == null) && (outpost2IA == null))
+                {
+                    moveable.SetGlobalTarget(towerIA);
+                }
+                entity.RestartEntity();
+            }
+                
+            entity.RestartEntity();
+        }
+    }
+
    
-
-    private Camera m_CurrentCamera;
-
-    private void Awake()
-    {
-        m_CurrentCamera = FindObjectOfType<Camera>();
-       
-    }
-    private void Start()
-    {
-        InstantaiteTower();
-    }
-    private void Update()
-    {
-        InstantiateEnemy();
-        SpawnEnemy();
-    }
-    private void InstantaiteTower()
-    {
-        //On récupère la tour setter dans le poolManger
-        GameObject towerinstanted = PoolManager.Instance.GetElement(prefabTowerEnemyInstantiate);
-        GameObject towerPlayerInstantiated = PoolManager.Instance.GetElement(prefabTowerPlayerInstantiate);
-        //On set son endroit de spawn 
-        towerinstanted.transform.position = globalTarget.transform.position;
-        towerPlayerInstantiated.transform.position = globalTarget1.transform.position;
-       //On active la tour.
-        towerinstanted.SetActive(true);
-        towerPlayerInstantiated.SetActive(true);
-
-
-    }
-    public void SpawnEnemy()
-    {
-        //On fais ecoulé selon le time.deltaTime(je sais pas trop comment il fonctionne)
-        timer = timer + Time.deltaTime;
-        //Si le timer est supérieur ou égale au timer courant alors on execute le if.
-        if (timer >= m_CurrentTimer)
-        {
-            if (prefabTowerEnemyInstantiate != null)
-            {
-                // On recupère un élement depuis le poolmanager
-                GameObject iaSpawn = PoolManager.Instance.GetElement(prefabEnemy);
-                //On Fais spawn l'IA a l'endroit de la tour
-                iaSpawn.transform.position = prefabTowerEnemyInstantiate.transform.position;
-                //On active l'IA qui est desactivé dans le poolManager.
-                iaSpawn.SetActive(true);
-                Entity entity = iaSpawn.GetComponent<Entity>();
-                if (entity)
-                {
-                    entity.InitEntity();
-                    if (entity is EntityMoveable moveable)
-                    {
-                        moveable.SetGlobalTarget(prefabTowerPlayerInstantiate);
-                    }
-                    entity.RestartEntity();
-                }
-            }
-           
-            timer = 0;
-            Debug.Log("Coucou");
-
-        }
-    }
-    private void InstantiateEnemy()
-    {
-        // Creation d'un Ray à partir de la camera
-        Ray ray = m_CurrentCamera.ScreenPointToRay(Input.mousePosition);
-        float mult = 1000;
-        Debug.DrawRay(ray.origin, ray.direction * mult, Color.green);
-
-        // Recuperation du bouton droit de la souris.
-        if (Input.GetMouseButtonDown(0))
-        {
-            // 
-            if (Physics.Raycast(ray, out RaycastHit hit, mult, LayerMask.GetMask("Default")))
-            {
-                // On recupère un élement depuis le poolmanager
-                GameObject instantiated = PoolManager.Instance.GetElement(prefabToInstantiate);
-                instantiated.transform.position = hit.point;
-                instantiated.SetActive(true);
-
-                Entity entity = instantiated.GetComponent<Entity>();
-                if (entity)
-                {
-                    entity.InitEntity();
-                    if (entity is EntityMoveable moveable)
-                    {
-                        moveable.SetGlobalTarget(prefabTowerEnemyInstantiate);
-                    }
-                    entity.RestartEntity();
-                }
-            }
-        }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            // 
-            if (Physics.Raycast(ray, out RaycastHit hit, mult, LayerMask.GetMask("Default")))
-            {
-                // On recupère un élement depuis le poolmanager
-                GameObject instantiated = PoolManager.Instance.GetElement(prefabEnemy);
-                instantiated.transform.position = hit.point;
-                instantiated.SetActive(true);
-                Entity entity = instantiated.GetComponent<Entity>();
-                if (entity)
-                {
-                    entity.InitEntity();
-                    if (entity is EntityMoveable moveable)
-                    {
-                        moveable.SetGlobalTarget(prefabTowerPlayerInstantiate);
-                    }
-                    entity.RestartEntity();
-                }
-            }
-        }
-    }
 }
